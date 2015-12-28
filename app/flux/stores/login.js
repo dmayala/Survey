@@ -12,7 +12,7 @@ class LoginStore {
     this._user = jwt_decode(this._jwt).user;
     if (process.env.BROWSER) {
       const history = require('utils/routerHistory');
-      const [ , nextPath = '/account' ] = window
+      const [ , nextPath = '/dashboard' ] = window
         .location.search.match(/\?redirect=(.+)$/) || [];
       return history.replaceState(null, nextPath);
     }
