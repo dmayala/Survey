@@ -1,0 +1,29 @@
+# Heroku environmental variables.
+# https://devcenter.heroku.com/articles/config-vars
+.env
+
+# npm packages
+node_modules
+npm-debug.log
+
+# bower packages
+bower_components
+
+# Mac
+.DS_Store
+
+# Vim
+*~
+*.swp
+*.swo
+
+# thumbnails
+Thumbs.db 
+
+# Compiled files
+public/css/*
+public/js/*
+
+# webpack stats
+webpack-stats.json
+
