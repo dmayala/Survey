@@ -34,6 +34,7 @@
     "morgan": "^1.6.1",
     "mysql": "^2.10.0",
     "react": "^0.14.3",
+    "react-bootstrap": "^0.28.1",
     "react-cookie": "^0.4.3",
     "react-dom": "^0.14.3",
     "react-mixin": "^3.0.3",
