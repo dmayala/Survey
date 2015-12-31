@@ -6,7 +6,11 @@ class LoginActions {
   constructor() {
     this.generateActions(
       'loginUserSuccess',
-      'loginUserFail'
+      'loginUserFail',
+      'logoutUserSuccess',
+      'logoutUserFail',
+      'loginGuestSuccess',
+      'loginGuestFail'
     );
   }
 
@@ -14,6 +18,20 @@ class LoginActions {
     return (dispatch, alt) =>
       alt.resolve(async () => {
         this.actions.loginUserSuccess(jwt);
+      });
+  }
+
+  logoutUser() {
+    return (dispatch, alt) =>
+      alt.resolve(async () => {
+        try {
+          if (cookie.load('jwt')) {
+            cookie.remove('jwt');
+            this.actions.logoutUserSuccess();
+          }
+        } catch (error) {
+          this.actions.logoutUserFail({ error });
+        }
       });
   }
 
@@ -30,6 +48,25 @@ class LoginActions {
       });
   }
 
+  loadGuest(jwt) {
+    return (dispatch, alt) =>
+      alt.resolve(async () => {
+        this.actions.loginGuestSuccess(jwt);
+      });
+  }
+
+  getGuest() {
+    return (dispatch, alt) =>
+      alt.resolve(async () => {
+        try {
+          const response = await APIUtils.getGuest();
+          cookie.save('guest', response.token);
+          this.actions.loginGuestSuccess(response);
+        } catch (error) {
+          this.actions.loginGuestFail({ error });
+        }
+      });
+  }
 }
 
 export default LoginActions; 

@@ -2,21 +2,35 @@ import 'babel/polyfill';
 import 'whatwg-fetch';
 
 export default {
-  async login(userInfo) {
+  async login(userinfo) {
+    console.log('here');
     try {
       let res = await fetch('/login', {
-        method: 'POST',
+        method: 'post',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'accept': 'application/json',
+          'content-type': 'application/json'
         },
-        body: JSON.stringify(userInfo)
+        body: JSON.stringify(userinfo)
       });
 
       let jwt = await res.json();
       return jwt;
     } catch (err) {
-      throw new Error(err);
+      throw new error(err);
+    }
+  },
+
+  async getGuest() {
+    try {
+      let res = await fetch('/guest', {
+        method: 'GET'
+      });
+
+      let jwt = await res.json();
+      return jwt;
+    } catch (err) {
+      throw new error(err);
     }
   }
 }

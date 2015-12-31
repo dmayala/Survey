@@ -10,7 +10,7 @@ class Home extends React.Component {
   render() {
     const props = Object.assign({}, this.state, this.props);
     return (
-      <div className="container" id="content">
+      <div className="container home-component">
         Home is here
       </div>
     );

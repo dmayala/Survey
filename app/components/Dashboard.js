@@ -6,11 +6,30 @@ export default AuthenticatedComponent(class Dashboard extends React.Component {
     super(props);
   }
 
+  state = {
+    question: '',
+    choices: []
+  }
+
+  _onChange = () => {
+
+  }
+
   render() {
-    const props = Object.assign({}, this.state, this.props);
+    let choices = this.state.choices.map((choice, index) => {
+      return (
+        <Input label={ `Choice ${index}`} name="choice" type="password" value={choice}
+          onChange={this._onChange} /> 
+      ); 
+    });
+
     return (
       <div className="container" id="content">
-        Dashboard is here
+        <h2>Add a Survey</h2> 
+        <form ref="addSurvey">
+          <Input label="Question" name="question" type="text" value={this.state.username}
+          onChange={this._onChange} /> 
+        </form>
       </div>
     );
   }

@@ -8,7 +8,7 @@ if (process.env.BROWSER) {
 class Footer extends React.Component {
   render() {
     return (
-      <footer className="container footer">
+      <footer className="container footer-component">
         <p className="pull-right"><Link to="/">Back Home</Link></p>
 
         <p>Built as a sample application with <a href=

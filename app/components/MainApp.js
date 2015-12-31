@@ -19,9 +19,7 @@ class MainApp extends React.Component {
     return (
       <div>
         <Header />
-        <hr />
         { children }
-        <hr />
         <Footer />
       </div>
     );

@@ -1,10 +1,10 @@
 import React from 'react';
+import {Input, Button} from 'react-bootstrap';
 
 class Login extends React.Component {
 
   static contextTypes = { 
-    flux: React.PropTypes.object.isRequired,
-    history: React.PropTypes.object.isRequired
+    flux: React.PropTypes.object.isRequired
   }
 
   state = {
@@ -15,7 +15,6 @@ class Login extends React.Component {
   _onLogin = (e) => {
     e.preventDefault();
     this.context.flux.getActions('login').loginUser(this.state);
-    window.history = this.context.history;
   }
 
   _onChange = (e) => {
@@ -27,14 +26,15 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="container">
+        <h2>Log In</h2>
         <form ref="loginForm">
-          <input label="Username" name="username" type="text" value={this.state.username}
+          <Input label="Username" name="username" type="text" value={this.state.username}
           onChange={this._onChange} /> 
-          <input label="Password" name="password" type="password" value={this.state.password}
+          <Input label="Password" name="password" type="password" value={this.state.password}
           onChange={this._onChange} /> 
         </form>
-        <button onClick={this._onLogin}>Login</button>
+        <Button onClick={this._onLogin}>Login</Button>
       </div>
     );
   }
