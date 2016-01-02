@@ -52,7 +52,7 @@ app.get('/api/surveys/rand', async (req, res) => {
           not: answered
         }
       },
-      order: [ [ db.Sequelize.fn('random') ] ]
+      order: [ [ db.Sequelize.fn('rand') ] ]
     });
     return res.send(survey);
   } catch (err) {

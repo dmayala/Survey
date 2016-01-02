@@ -6,7 +6,7 @@ export default {
     try {
       let survey = await db.Survey.findOne({
         include: [ { model: db.Choice, as: 'choices' } ],
-        order: [ [ db.Sequelize.fn('random') ] ],
+        order: [ [ db.Sequelize.fn('rand') ] ],
         where: {
           id: {
             not: answered 
