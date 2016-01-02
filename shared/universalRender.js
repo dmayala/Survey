@@ -85,6 +85,7 @@ export default async function({ flux, history, location, container }) {
 
       fluxSnapshot = flux.takeSnapshot();
       app = null;
+      throw { error: renderErr }
     }
 
     // Get status code, page title and page description for rendering
