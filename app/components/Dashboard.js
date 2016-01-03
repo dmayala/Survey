@@ -1,6 +1,14 @@
 import React from 'react';
 import AuthenticatedComponent from 'components/AuthenticatedComponent';
-import {Input, Button} from 'react-bootstrap';
+import {Input, Button, Glyphicon, Alert} from 'react-bootstrap';
+
+let getClearState = () => {
+  return {
+    question: '',
+    choices: [ null, null, null ],
+    success: null
+  }
+};
 
 export default AuthenticatedComponent(class Dashboard extends React.Component {
 
@@ -8,16 +16,23 @@ export default AuthenticatedComponent(class Dashboard extends React.Component {
     flux: React.PropTypes.object.isRequired
   }
 
-  state = {
-    question: '',
-    choices: [ null, null, null ]
-  }
+  state = getClearState(); 
 
   _onChange = () => {
-    this.setState({
-      question: '',
-      choices: [ null, null, null ]
-    });
+    this.refs.addSurvey.reset();
+    let state = getClearState();
+    state.success = true;
+    this.setState(state);
+  }
+
+  componentDidMount() {
+    this.context.flux.getStore('dashboard')
+                     .listen(this._onChange);
+  }
+
+  componentWillUnmount() {
+    this.context.flux.getStore('dashboard')
+                     .unlisten(this._onChange);
   }
 
   _onInputChange = (e, index) => {
@@ -35,23 +50,58 @@ export default AuthenticatedComponent(class Dashboard extends React.Component {
     this.context.flux.getActions('dashboard').addSurvey(this.state);
   }
 
+  _addChoice = (e) => {
+    e.preventDefault();
+    let state = Object.assign({}, this.state);
+    state.choices.push(null);
+    this.setState(state);
+  }
+
+  _removeChoice = (index) => {
+    let state = Object.assign({}, this.state);
+    state.choices.splice(index, 1);
+    this.setState(state);
+  }
+
   render() {
     let choices = this.state.choices.map((choice, index) => {
       return (
-        <Input key={index} label={`Choice ${index + 1}`} name="choices" type="text"
-        onChange={e => this._onInputChange(e, index)} /> 
+        <Input key={index} name="choices" type="text" placeholder="Enter a choice"
+        onChange={e => this._onInputChange(e, index)} buttonAfter={(
+          <Button bsStyle="danger" onClick={this._removeChoice.bind(this, index)}>
+            <Glyphicon glyph="minus" />
+          </Button>
+        )}/> 
       ); 
     });
 
     return (
       <div className="container" id="content">
-        <h2>Add a Survey</h2> 
+
+        { this.state.success ? (
+          <Alert bsStyle="success">
+            <strong>Success!</strong> A new survey has been added.
+          </Alert>
+          ) : null}
+
         <form ref="addSurvey">
-          <Input label="Question" name="question" type="text" value={this.state.username}
+          <h2>Add a New Survey</h2> 
+          <Input name="question" type="text" placeholder="Enter a question" value={this.state.username}
           onChange={this._onInputChange} /> 
+          <hr />
+          <h2>Choices</h2>
+          <Button bsStyle="default" onClick={this._addChoice} style={{ margin: '10px 0' }}>
+            <Glyphicon glyph="plus" />
+            &nbsp;Add a Choice
+          </Button>
+          <div style={{ color: 'red', display: this.state.choices.length < 2 ? 'inline' : 'none' }}> 2 or more choices required</div>
           { choices }
         </form>
-        <Button onClick={this._onSubmit}>Add Survey</Button>
+        <hr />
+        <Button bsStyle="primary" onClick={this._onSubmit} disabled={this.state.choices.length < 2}>
+          <Glyphicon glyph="save" />
+          &nbsp;Save New Survey
+        </Button>
       </div>
     );
   }

@@ -4,9 +4,11 @@ import logger from 'morgan';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
-import jwtSimple from 'jwt-simple';
+import jwt_simple from 'jwt-simple';
 import jwt_decode from 'jwt-decode';
 import db from 'models/';
+
+import surveyRoutes from './routes/surveys';
 
 const bcrypt = require('bluebird').promisifyAll(require('bcrypt'));
 
@@ -32,55 +34,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Return all surveys
-app.get('/api/surveys', async (req, res) => {
-  try {
-    let surveys = await db.Survey.findAll();
-    return res.send({ surveys });
-  } catch (err) {
-    return next(err);
-  }
-});
 
-// Return a random survey
-app.get('/api/surveys/rand', async (req, res) => {
-  try {
-    let survey = await db.Survey.findOne({
-      include: [ { model: db.Choice, as: 'choices' } ],
-      where: {
-        id: {
-          not: answered
-        }
-      },
-      order: [ [ db.Sequelize.fn('rand') ] ]
-    });
-    return res.send(survey);
-  } catch (err) {
-    return next(err);
-  }
-});
-
-// Pick a survey choice
-app.post('/api/surveys/:surveyId/votes/:choiceId', async (req, res) => {
-  let { surveyId, choiceId } = req.params;
-  let token = jwt_decode(req.body.guest);
-  let { guest, answered } = token;
-
-  if (answered.indexOf(surveyId) === -1) {
-    try {
-      let vote = await db.Vote.create({ guest, ChoiceId: choiceId });
-      answered.push(surveyId); 
-      token = jwtSimple.encode({ guest, answered }, process.env.JWT_SECRET);
-      return res.send({ token });
-    } catch (err) {
-      return next(err);
-    }
-  }
-  res.status(500).send({ 'error': 'You have already answered this question.' });
-});
+app.use('/api/surveys', surveyRoutes);
 
 app.get('/guest', async (req, res) => {
-  let token = jwtSimple.encode({ guest: require('uuid').v4(), answered: [] }, process.env.JWT_SECRET);
+  let token = jwt_simple.encode({ guest: require('uuid').v4(), answered: [] }, process.env.JWT_SECRET);
   return res.send({ token });
 });
 
@@ -93,7 +51,7 @@ app.post('/login', async (req, res) => {
     let check = await bcrypt.compareAsync(password, user.get('password'));
 
     if (check) {
-      let token = jwtSimple.encode({ user: user.get('username') }, process.env.JWT_SECRET);
+      let token = jwt_simple.encode({ user: user.get('username') }, process.env.JWT_SECRET);
       return res.send({ token });
     }
   }
@@ -113,7 +71,7 @@ app.use(async (req, res, next) => {
     if (guest) {
       flux.getActions('login').loadGuest({ token: guest });
     } else {
-      let token = jwtSimple.encode({ guest: require('uuid').v4(), answered: [] }, process.env.JWT_SECRET);
+      let token = jwt_simple.encode({ guest: require('uuid').v4(), answered: [] }, process.env.JWT_SECRET);
       flux.getActions('login').loadGuest({ token });
       res.cookie('guest', token);
     }

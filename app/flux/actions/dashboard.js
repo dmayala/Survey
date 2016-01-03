@@ -1,6 +1,6 @@
 const APIUtils = require(`../../../shared/API/Dashboard/${ process.env.BROWSER ? 'client' : 'server' }`)
 
-class SurveyActions { 
+class DashboardActions { 
 
   constructor() {
     this.generateActions(
@@ -22,4 +22,4 @@ class SurveyActions {
   }
 }
 
-export default SurveyActions; 
+export default DashboardActions; 

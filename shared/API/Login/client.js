@@ -3,7 +3,6 @@ import 'whatwg-fetch';
 
 export default {
   async login(userinfo) {
-    console.log('here');
     try {
       let res = await fetch('/login', {
         method: 'post',
