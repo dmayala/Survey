@@ -1,4 +1,5 @@
 import express from 'express';
+import jwt_simple from 'jwt-simple';
 import db from 'models/';
 
 const router = express.Router();
@@ -25,25 +26,31 @@ router.get('/rand', async (req, res) => {
 
 // Create a new survey
 router.post('/', async (req, res) => {
-  let { question, choices } = req.body;
 
   try {
-    let survey = await db.Survey.create({ question });
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      let { question, choices } = req.body;
+      let token = req.headers.authorization.split(' ')[1];
+      let decoded = jwt_simple.decode(token, process.env.JWT_SECRET);
 
-    choices = choices.map((text) => {
-      return db.Choice.create({ text, SurveyId: survey.id });
-    });
+      if (decoded.user === 'admin') {
+          let survey = await db.Survey.create({ question });
 
-    await Promise.all(choices);
-    
-    let completeSurvey = await db.Survey.findOne({
-      include: [ { model: db.Choice, as: 'choices' } ],
-      where: { id: survey.id },
-    });
+          choices = choices.map((text) => {
+            return db.Choice.create({ text, SurveyId: survey.id });
+          });
 
-    return res.send(completeSurvey);
+          await Promise.all(choices);
+          
+          let completeSurvey = await db.Survey.findOne({
+            include: [ { model: db.Choice, as: 'choices' } ],
+            where: { id: survey.id },
+          });
+
+          return res.send(completeSurvey);
+      }
+    }
   } catch (err) {
-    console.log(err);
     return res.status(500).send({ 'error': 'An error has occurred' });
   }
 
@@ -53,7 +60,7 @@ router.post('/', async (req, res) => {
 // Pick a survey choice
 router.post('/:surveyId/votes/:choiceId', async (req, res) => {
   let { surveyId, choiceId } = req.params;
-  let token = jwt_decode(req.body.guest);
+  let token = jwt_simple.decode(req.body.guest, process.env.JWT_SECRET);
   let { guest, answered } = token;
 
   if (answered.indexOf(surveyId) === -1) {

@@ -5,7 +5,6 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
 import jwt_simple from 'jwt-simple';
-import jwt_decode from 'jwt-decode';
 import db from 'models/';
 
 import surveyRoutes from './routes/surveys';
@@ -65,18 +64,19 @@ app.use(async (req, res, next) => {
   const flux = createFlux();
 
   let  { jwt, guest } = req.cookies;
+
   if (jwt) {
     flux.getActions('login').loadUser({ token: jwt });
+  } 
+  
+  if (guest) {
+    flux.getActions('login').loadGuest({ token: guest });
   } else {
-    if (guest) {
-      flux.getActions('login').loadGuest({ token: guest });
-    } else {
-      let token = jwt_simple.encode({ guest: require('uuid').v4(), answered: [] }, process.env.JWT_SECRET);
-      flux.getActions('login').loadGuest({ token });
-      res.cookie('guest', token);
-    }
+    let token = jwt_simple.encode({ guest: require('uuid').v4(), answered: [] }, process.env.JWT_SECRET);
+    flux.getActions('login').loadGuest({ token });
+    res.cookie('guest', token);
   }
-
+  
   await flux.resolver.dispatchPendingActions();
 
   try {

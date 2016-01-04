@@ -38,8 +38,8 @@ export default async (db) => {
   ]);
 
   let user = await db.User.create({
-    username: 'tigger',
-    password: bcrypt.hashSync('tiger', salt)
+    username: 'admin',
+    password: bcrypt.hashSync('root', salt)
   });
 
   return user;
