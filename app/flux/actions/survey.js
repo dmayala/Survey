@@ -12,10 +12,11 @@ class SurveyActions {
     );
   }
 
-  getRandom(answered) {
-    return (dispatch, alt) =>
+  getRandom() {
+    return (dispatch, alt) => 
       alt.resolve(async () => {
         try {
+          let answered = alt.getStore('login').getState()._answered
           const response = await APIUtils.getRandom(answered);
           this.actions.getRandomSuccess(response);
         } catch (error) {
@@ -32,7 +33,8 @@ class SurveyActions {
           if (response.token) {
             cookie.save('guest', response.token);
             alt.getActions('login').loadGuest(response);
-            this.actions.voteSuccess(response);
+            this.actions.voteSuccess();
+            this.actions.getRandom();
           }
         } catch (error) {
           this.actions.voteFail({ error });

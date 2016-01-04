@@ -8,11 +8,13 @@ const endpoint = '/api/surveys';
 export default {
   async getRandom() {
     try {
+      let bearer = cookie.load('guest');
       let res = await fetch(`${endpoint}/rand`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${bearer}`
         }
       });
 

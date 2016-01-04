@@ -17,9 +17,7 @@ class Survey extends React.Component {
 
   componentWillMount() {
     this.context.flux.getActions('survey')
-                     .getRandom(this.context.flux.getStore('login')
-                                                 .getState()
-                                                 ._answered);
+                     .getRandom();
   }
 
   componentDidMount() {

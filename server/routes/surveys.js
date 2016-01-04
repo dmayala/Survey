@@ -17,8 +17,17 @@ router.get('/', async (req, res) => {
 // Return a random survey
 router.get('/rand', async (req, res) => {
   try {
-    let survey = await db.Survey.getRandom();
-    return res.send(survey);
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      let token = req.headers.authorization.split(' ')[1];
+      let decoded = jwt_simple.decode(token, process.env.JWT_SECRET);
+      let { answered } = decoded;
+      let survey = await db.Survey.getRandom(answered);
+
+      if (survey) {
+        return res.send(survey);
+      }
+    }
+    return res.status(500).send({ 'error': 'An error has occurred' });
   } catch (err) {
     return next(err);
   }
