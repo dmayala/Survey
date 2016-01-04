@@ -16,15 +16,7 @@ router.get('/', async (req, res) => {
 // Return a random survey
 router.get('/rand', async (req, res) => {
   try {
-    let survey = await db.Survey.findOne({
-      include: [ { model: db.Choice, as: 'choices' } ],
-      where: {
-        id: {
-          not: answered
-        }
-      },
-      order: [ [ db.Sequelize.fn('rand') ] ]
-    });
+    let survey = await db.Survey.getRandom();
     return res.send(survey);
   } catch (err) {
     return next(err);

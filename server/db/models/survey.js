@@ -35,6 +35,19 @@ export default (sequelize, DataTypes) => {
     classMethods: {
       associate(models) {
         Survey.hasMany(models.Choice, { as: 'choices' });
+      },
+
+      getRandom(answered = []) {
+        answered = answered.length > 0 ? answered : 0;
+        return Survey.findOne({
+          include: [ { model: Choice, as: 'choices' } ],
+          order: [ [ Sequelize.fn('rand') ] ],
+          where: {
+            id: {
+              not: answered 
+            }
+          }
+        });
       }
     }
   });
