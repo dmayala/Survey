@@ -7,9 +7,19 @@ const router = express.Router();
 // Return all surveys
 router.get('/', async (req, res) => {
   try {
-    let surveys = await db.Survey.findAll();
-    return res.send({ surveys });
+    let surveys = await db.Survey.findAll({
+      include: [{ 
+        model: db.Choice, as: 'choices', 
+        include: {
+          model: db.Vote, as: 'votes',
+          attributes: ['id']
+        }
+      }],
+    });
+
+    return res.send(surveys);
   } catch (err) {
+    console.log(err);
     return next(err);
   }
 });
