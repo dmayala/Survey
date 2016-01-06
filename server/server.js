@@ -133,9 +133,12 @@ app.use((err, req, res, next) => {
 
 const server = require('http').createServer(app);
 db.sequelize
-  .sync({ force: true})
+  .sync()
   .then(async (obj) => {
-    await require('seeds/seed')(db);
+    let survey = await db.Survey.findOne();
+    if (!survey) {
+      await require('seeds/seed')(db);
+    }
     server.listen(app.get('port'), () => {
       if (process.send) {
         process.send('online');

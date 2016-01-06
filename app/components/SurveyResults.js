@@ -11,11 +11,16 @@ export default AuthenticatedComponent(class SurveyResults extends React.Componen
     history: React.PropTypes.object.isRequired
   }
 
-  state = this.getState();
+  state = this._getResultsState();
 
-  getState() {
-    return this.context.flux.getStore('surveyResults')
-                            .getState();
+  _getResultsState() {
+    let store = this.context.flux.getStore('surveyResults');
+    let surveyResultState = store.getState();
+
+    return {
+      surveys: surveyResultState.surveys,
+      searchTerm: '' 
+    };
   }
 
   componentWillMount() {
@@ -34,16 +39,24 @@ export default AuthenticatedComponent(class SurveyResults extends React.Componen
   }
 
   _onChange = () => {
-    this.setState(this.getState());
+    this.setState(this._getResultsState());
+  }
+
+  _handleSearch = () => {
+    let state = Object.assign({}, this.state);
+    state.searchTerm = this.refs.resultSearch.getValue().toLowerCase();
+    this.setState(state);
   }
 
   render() {
-    let surveys = this.state.surveys.map(survey => {
+    let surveys = this.state.surveys.filter((survey) => {
+      return survey.question.toLowerCase().indexOf(this.state.searchTerm) !== -1;
+    }).map(survey => {
       let choices = sortBy(survey.choices, 'id').map((choice, index) => {
-        return (
-          <li key={index}>{choice.text} - {choice.votes.length}</li>
-        ); 
-      });
+      return (
+        <li key={index}>{choice.text} - {choice.votes.length}</li>
+      ); 
+    });
 
       return (
         <Panel href="#" key={survey.id} eventKey={survey.id} header={survey.question}>
@@ -57,7 +70,7 @@ export default AuthenticatedComponent(class SurveyResults extends React.Componen
     return (
       <div className="container" id="results">
         <h2>Results</h2>       
-          <Input name="search" type="text" placeholder="Search for surveys" /> 
+          <Input ref="resultSearch" onChange={this._handleSearch}name="search" type="text" placeholder="Search for surveys" /> 
           <Accordion>
             { surveys }
           </Accordion>

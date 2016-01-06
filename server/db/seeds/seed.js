@@ -9,6 +9,10 @@ export default async (db) => {
   let secondSurvey = await db.Survey.create({
     question: 'How are you?'
   });
+
+  let thirdSurvey = await db.Survey.create({
+    question: 'Pick a color'
+  });
   
   await db.Choice.bulkCreate([{
     id: 1,
@@ -20,7 +24,7 @@ export default async (db) => {
     SurveyId: firstSurvey.id
   },{
     id: 3,
-    text: 'Improved Security',
+    text: 'Improved Questions',
     SurveyId: firstSurvey.id
   },{
     id: 4,
@@ -34,6 +38,22 @@ export default async (db) => {
     id: 6,
     text: 'Terrible',
     SurveyId: secondSurvey.id
+  },{
+    id: 7,
+    text: 'Red',
+    SurveyId: thirdSurvey.id
+  },{
+    id: 8,
+    text: 'Yellow',
+    SurveyId: thirdSurvey.id
+  },{
+    id: 9,
+    text: 'Green',
+    SurveyId: thirdSurvey.id
+  },{
+    id: 10,
+    text: 'Blue',
+    SurveyId: thirdSurvey.id
   }
   ]);
 
