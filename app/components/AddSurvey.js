@@ -49,7 +49,18 @@ export default AuthenticatedComponent(class AddSurvey extends React.Component {
 
   _onSubmit = (e) => {
     e.preventDefault();
-    this.context.flux.getActions('dashboard').addSurvey(this.state);
+    let { question, choices } = this.state;
+
+    if (question && choices && choices.length > 1) {
+      let filled = choices.filter((choice) => { return choice; }); 
+      if (filled.length === choices.length) {
+        return this.context.flux.getActions('dashboard').addSurvey(this.state);
+      }
+    }
+
+    let state = Object.assign({}, this.state);
+    state.success = false;
+    this.setState(state);
   }
 
   _addChoice = (e) => {
@@ -83,6 +94,12 @@ export default AuthenticatedComponent(class AddSurvey extends React.Component {
         { this.state.success ? (
           <Alert bsStyle="success">
             <strong>Success!</strong> A new survey has been added.
+          </Alert>
+          ) : null}
+
+        { this.state.success === false ? (
+          <Alert bsStyle="danger">
+            <strong>Error!</strong> Question and Choice fields cannot be blank.
           </Alert>
           ) : null}
 
