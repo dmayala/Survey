@@ -13,12 +13,12 @@ export default function (flux) {
   return (
     <Route component={MainApp}>
       <Route path="/" component={Survey} />
-      <Route path="dashboard" onEnter={ isConnected(flux) }>
+      <Route path="dashboard" onEnter={isConnected(flux)}>
         <IndexRoute component={AddSurvey} />
         <Route path="results" component={SurveyResults} />
       </Route>
       <Route path="survey" component={Survey} />
-      <Route path="results" component={SurveyResults} />
+      <Route path="results" onEnter={isConnected(flux)} component={SurveyResults} />
       <Route path="login" component={Login} />
     </Route>
   );

@@ -23,7 +23,7 @@ An .env file needs to be created in the project root, with the following attribu
 Where ```INSERTVARHERE``` is replaced with your own MySQL URI and JWT secret.
 
 ## Running Locally
-Create the above .env file, then execute the following commands:
+After finishing the above requirements, execute the following commands:
 ```sh
   git clone https://github.com/dmayala/survey.git
   cd survey
@@ -31,3 +31,11 @@ Create the above .env file, then execute the following commands:
   npm run start
 ``` 
 The application will run on http://localhost:3000
+
+This is the default login for the Admin pages:
+```sh
+  username: admin
+  password: root
+``` 
+
+

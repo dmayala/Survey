@@ -7,19 +7,24 @@ const router = express.Router();
 // Return all surveys
 router.get('/', async (req, res) => {
   try {
-    let surveys = await db.Survey.findAll({
-      include: [{ 
-        model: db.Choice, as: 'choices', 
-        include: {
-          model: db.Vote, as: 'votes',
-          attributes: ['id']
-        }
-      }],
-    });
-
-    return res.send(surveys);
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      let token = req.headers.authorization.split(' ')[1];
+      let decoded = jwt_simple.decode(token, process.env.JWT_SECRET);
+      if (decoded.user === 'admin') {
+        let surveys = await db.Survey.findAll({
+          include: [{ 
+            model: db.Choice, as: 'choices', 
+            include: {
+              model: db.Vote, as: 'votes',
+              attributes: ['id']
+            }
+          }],
+        });
+        return res.send(surveys);
+      }
+    }
+    return res.status(500).send({ 'error': 'An error has occurred' });
   } catch (err) {
-    console.log(err);
     return next(err);
   }
 });
