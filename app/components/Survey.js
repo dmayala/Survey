@@ -39,8 +39,8 @@ class Survey extends React.Component {
     this.context.flux.getActions('survey')
                      .vote(this.state.id, choiceId);
   }
-
-  render() {
+  
+  _renderSurvey = () => {
     let { id, question, choices } = this.state;
     
     choices = sortBy(choices, 'id').map((choice) => {
@@ -50,13 +50,32 @@ class Survey extends React.Component {
     });
 
     return (
-      <div className="container survey-component">
+      <div>
         <h2 className="text-center">
           { question }
         </h2>
         <div className="well">
           { choices }
         </div>
+      </div>
+    );
+  }
+  
+  _renderEmpty = () => {
+    return (
+      <div>
+        <h2 className="text-center">
+          There are no more surveys. :(
+        </h2>
+        <p className="text-center">Check again later!</p>
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <div className="container survey-component">
+        { this.state.question ? this._renderSurvey() : this._renderEmpty() }
       </div>
     );
   }
